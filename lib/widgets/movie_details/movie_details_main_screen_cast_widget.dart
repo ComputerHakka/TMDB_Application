@@ -88,6 +88,7 @@ class MovieDetailsMainScreenCastWidget extends StatelessWidget {
             child: TextButton(
                 onPressed: () {}, child: const Text('Full Cast & Crew')),
           ),
+          const Divider(),
         ],
       ),
     );
