@@ -1,5 +1,5 @@
-import 'package:cinema_app/theme/app_button_style.dart';
-import 'package:cinema_app/widgets/auth/auth_model.dart';
+import 'package:cinema_app/ui/theme/app_button_style.dart';
+import 'package:cinema_app/ui/widgets/auth/auth_model.dart';
 import 'package:flutter/material.dart';
 
 class AuthWidget extends StatefulWidget {

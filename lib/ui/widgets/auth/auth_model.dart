@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:cinema_app/domain/api_client/api_client.dart';
 import 'package:cinema_app/domain/data_providers/session_data_provider.dart';
+import 'package:cinema_app/ui/navigation/main_navigation.dart';
 import 'package:flutter/material.dart';
 
 class AuthModel extends ChangeNotifier {
@@ -49,7 +50,8 @@ class AuthModel extends ChangeNotifier {
     }
 
     await _sessionDataProvider.setSessionId(sessionId);
-    unawaited(Navigator.of(context).pushNamed('/main_screen'));
+    unawaited(Navigator.of(context)
+        .pushReplacementNamed(MainNavigationRouteNames.mainScreen));
   }
 }
 

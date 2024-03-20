@@ -1,5 +1,5 @@
 import 'package:cinema_app/resources/resources.dart';
-import 'package:cinema_app/widgets/elements/radial_percent_widget.dart';
+import 'package:cinema_app/ui/widgets/elements/radial_percent_widget.dart';
 import 'package:flutter/material.dart';
 
 TextStyle getTextStyle(
