@@ -55,28 +55,29 @@ class AuthModel extends ChangeNotifier {
   }
 }
 
-class AuthProvider extends InheritedNotifier {
-  final AuthModel model;
-  const AuthProvider({
-    super.key,
-    required this.model,
-    required super.child,
-  }) : super(
-          notifier: model,
-        );
+// class AuthProvider extends InheritedNotifier {
+//   final AuthModel model;
+//   const AuthProvider({
+//     super.key,
+//     required this.model,
+//     required super.child,
+//   }) : super(
+//           notifier: model,
+//         );
 
-  static AuthProvider? watch(BuildContext context) {
-    return context.dependOnInheritedWidgetOfExactType<AuthProvider>();
-  }
+//   static AuthProvider? watch(BuildContext context) {
+//     return context.dependOnInheritedWidgetOfExactType<AuthProvider>();
+//   }
 
-  static AuthProvider? read(BuildContext context) {
-    final widget =
-        context.getElementForInheritedWidgetOfExactType<AuthProvider>()?.widget;
-    return widget is AuthProvider ? widget : null;
-  }
+//   static AuthProvider? read(BuildContext context) {
+//     final widget =
+//         context.getElementForInheritedWidgetOfExactType<AuthProvider>()?.widget;
+//     return widget is AuthProvider ? widget : null;
+//   }
 
-  @override
-  bool updateShouldNotify(AuthProvider oldWidget) {
-    return true;
-  }
-}
+//   @override
+//   bool updateShouldNotify(AuthProvider oldWidget) {
+//     return true;
+//   }
+// }
+
