@@ -1,3 +1,4 @@
+import 'package:cinema_app/library/widgets/provider.dart';
 import 'package:cinema_app/ui/widgets/auth/auth_model.dart';
 import 'package:cinema_app/ui/widgets/auth/auth_widget.dart';
 import 'package:cinema_app/ui/widgets/main_screen/main_screen_widget.dart';
@@ -16,7 +17,7 @@ class MainNavigation {
       : MainNavigationRouteNames.auth;
 
   final routes = <String, Widget Function(BuildContext)>{
-    MainNavigationRouteNames.auth: (context) => AuthProvider(
+    MainNavigationRouteNames.auth: (context) => NotifierProvider(
           model: AuthModel(),
           child: const AuthWidget(),
         ),
