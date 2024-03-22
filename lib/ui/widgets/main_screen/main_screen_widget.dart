@@ -1,5 +1,6 @@
-import 'package:cinema_app/widgets/movie_list/movie_list_widget.dart';
-import 'package:cinema_app/widgets/serial_list/serial_list_widget.dart';
+import 'package:cinema_app/domain/data_providers/session_data_provider.dart';
+import 'package:cinema_app/ui/widgets/movie_list/movie_list_widget.dart';
+import 'package:cinema_app/ui/widgets/serial_list/serial_list_widget.dart';
 import 'package:flutter/material.dart';
 
 class MainScreenWidget extends StatefulWidget {
@@ -30,6 +31,12 @@ class _MainScreenWidgetState extends State<MainScreenWidget> {
     return Scaffold(
         appBar: AppBar(
           title: const Text('TMDb'),
+          actions: [
+            IconButton(
+              onPressed: () => SessionDataProvider().setSessionId(null),
+              icon: const Icon(Icons.search),
+            )
+          ],
         ),
         bottomNavigationBar: BottomNavigationBar(
           type: BottomNavigationBarType.fixed,
