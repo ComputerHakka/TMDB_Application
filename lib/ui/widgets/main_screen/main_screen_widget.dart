@@ -1,4 +1,6 @@
 import 'package:cinema_app/domain/data_providers/session_data_provider.dart';
+import 'package:cinema_app/library/widgets/provider.dart';
+import 'package:cinema_app/ui/widgets/movie_list/movie_list_model.dart';
 import 'package:cinema_app/ui/widgets/movie_list/movie_list_widget.dart';
 import 'package:cinema_app/ui/widgets/serial_list/serial_list_widget.dart';
 import 'package:flutter/material.dart';
@@ -12,6 +14,7 @@ class MainScreenWidget extends StatefulWidget {
 
 class _MainScreenWidgetState extends State<MainScreenWidget> {
   int _selectedTab = 0;
+  final movieListModel = MovieListModel();
   // static final List<Widget> _widgetOptions = <Widget>[
   //   const Text('Новости'),
   //   MovieListWidget(),
@@ -24,6 +27,12 @@ class _MainScreenWidgetState extends State<MainScreenWidget> {
     setState(() {
       _selectedTab = index;
     });
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    movieListModel.setupLocale(context);
   }
 
   @override
@@ -65,7 +74,10 @@ class _MainScreenWidgetState extends State<MainScreenWidget> {
           index: _selectedTab,
           children: [
             const Text('Новости'),
-            MovieListWidget(),
+            NotifierProvider(
+              model: movieListModel,
+              child: const MovieListWidget(),
+            ),
             const SerialListWidget(),
             const Text('Аккаунт'),
           ],
