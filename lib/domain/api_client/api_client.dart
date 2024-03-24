@@ -116,7 +116,7 @@ class ApiClient {
     }
 
     final result = _get(
-      'movie/popular',
+      '/movie/popular',
       parser,
       {
         'api_key': _apiKey,
