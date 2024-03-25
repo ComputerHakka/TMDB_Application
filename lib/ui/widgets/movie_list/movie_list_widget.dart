@@ -1,121 +1,27 @@
-import 'package:cinema_app/resources/resources.dart';
-import 'package:cinema_app/ui/navigation/main_navigation.dart';
+import 'package:cinema_app/domain/api_client/api_client.dart';
+import 'package:cinema_app/library/widgets/provider.dart';
+import 'package:cinema_app/ui/widgets/movie_list/movie_list_model.dart';
 import 'package:flutter/material.dart';
 
-class Movie {
-  final int id;
-  final String imageName;
-  final String title;
-  final String time;
-  final String description;
-
-  Movie(
-      {required this.id,
-      required this.imageName,
-      required this.title,
-      required this.time,
-      required this.description});
-}
-
-class MovieListWidget extends StatefulWidget {
-  MovieListWidget({super.key});
-
-  @override
-  State<MovieListWidget> createState() => _MovieListWidgetState();
-}
-
-class _MovieListWidgetState extends State<MovieListWidget> {
-  final _movies = [
-    Movie(
-      id: 1,
-      imageName: AppImages.moviePlaceholder,
-      title: 'Страх и ненависть в Лас-Вегасе',
-      time: 'Май 9, 2013',
-      description:
-          'Рандомный большой текст для проверки правильности переноса текста в колонке и за ее пределами, так как Флаттер немного тупенький',
-    ),
-    Movie(
-      id: 2,
-      imageName: AppImages.moviePlaceholder,
-      title: 'Snach',
-      time: 'Июнь 20, 2013',
-      description:
-          'Рандомный большой текст для проверки правильности переноса текста в колонке и за ее пределами, так как Флаттер немного тупенький',
-    ),
-    Movie(
-      id: 3,
-      imageName: AppImages.moviePlaceholder,
-      title: 'Криминальное чтиво',
-      time: 'Сентябрь 3, 2013',
-      description:
-          'Рандомный большой текст для проверки правильности переноса текста в колонке и за ее пределами, так как Флаттер немного тупенький',
-    ),
-    Movie(
-      id: 4,
-      imageName: AppImages.moviePlaceholder,
-      title: 'Форрест гамп',
-      time: 'Август 9, 2013',
-      description:
-          'Рандомный большой текст для проверки правильности переноса текста в колонке и за ее пределами, так как Флаттер немного тупенький',
-    ),
-    Movie(
-      id: 5,
-      imageName: AppImages.moviePlaceholder,
-      title: 'Trainspotting',
-      time: 'Февраль 9, 2013',
-      description:
-          'Рандомный большой текст для проверки правильности переноса текста в колонке и за ее пределами, так как Флаттер немного тупенький',
-    ),
-    Movie(
-      id: 6,
-      imageName: AppImages.moviePlaceholder,
-      title: 'Большой Лебовски',
-      time: 'Май 10, 2013',
-      description:
-          'Рандомный большой текст для проверки правильности переноса текста в колонке и за ее пределами, так как Флаттер немного тупенький',
-    ),
-  ];
-
-  var _fillteredMovies = <Movie>[];
-
-  final _searchController = TextEditingController();
-
-  void _searchMovies() {
-    final query = _searchController.text;
-    if (query.isNotEmpty) {
-      _fillteredMovies = _movies.where((Movie movie) {
-        return movie.title.toLowerCase().contains(query.toLowerCase());
-      }).toList();
-    } else {
-      _fillteredMovies = _movies;
-    }
-    setState(() {});
-  }
-
-  @override
-  void initState() {
-    super.initState();
-    _fillteredMovies = _movies;
-    _searchController.addListener(_searchMovies);
-  }
-
-  void _onMovieTap(int index) {
-    final id = _movies[index].id;
-    Navigator.of(context)
-        .pushNamed(MainNavigationRouteNames.movieDetails, arguments: id);
-  }
+class MovieListWidget extends StatelessWidget {
+  const MovieListWidget({super.key});
 
   @override
   Widget build(BuildContext context) {
+    final model = NotifierProvider.watch<MovieListModel>(context);
+
+    if (model == null) return const SizedBox.shrink();
     return Stack(
       children: [
         ListView.builder(
           padding: const EdgeInsets.only(top: 70),
           keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
-          itemCount: _fillteredMovies.length,
+          itemCount: model.movies.length,
           itemExtent: 163,
           itemBuilder: (BuildContext context, int index) {
-            final movie = _fillteredMovies[index];
+            model.showMovieAtindex(index);
+            final movie = model.movies[index];
+            final posterPath = movie.posterPath;
             return Padding(
               padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
               child: Stack(
@@ -136,7 +42,10 @@ class _MovieListWidgetState extends State<MovieListWidget> {
                     clipBehavior: Clip.hardEdge,
                     child: Row(
                       children: [
-                        Image(image: AssetImage(movie.imageName)),
+                        posterPath != null
+                            ? Image.network(ApiClient.imageUrl(posterPath),
+                                width: 95)
+                            : const SizedBox.shrink(),
                         const SizedBox(width: 15),
                         Expanded(
                           child: Column(
@@ -152,14 +61,14 @@ class _MovieListWidgetState extends State<MovieListWidget> {
                               ),
                               const SizedBox(height: 2),
                               Text(
-                                movie.time,
+                                model.stringFromDate(movie.releaseDate),
                                 style: const TextStyle(color: Colors.grey),
                                 maxLines: 1,
                                 overflow: TextOverflow.ellipsis,
                               ),
                               const SizedBox(height: 20),
                               Text(
-                                movie.description,
+                                movie.overview,
                                 maxLines: 2,
                                 overflow: TextOverflow.ellipsis,
                               ),
@@ -174,7 +83,7 @@ class _MovieListWidgetState extends State<MovieListWidget> {
                     color: Colors.transparent,
                     child: InkWell(
                       borderRadius: const BorderRadius.all(Radius.circular(10)),
-                      onTap: () => _onMovieTap(index),
+                      onTap: () => model.onMovieTap(context, index),
                     ),
                   )
                 ],
@@ -185,7 +94,7 @@ class _MovieListWidgetState extends State<MovieListWidget> {
         Padding(
           padding: const EdgeInsets.all(10.0),
           child: TextField(
-            controller: _searchController,
+            onChanged: model.searchMovie,
             decoration: InputDecoration(
               labelText: 'Поиск',
               filled: true,
