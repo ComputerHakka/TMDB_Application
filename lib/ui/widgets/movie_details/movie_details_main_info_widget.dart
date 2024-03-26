@@ -1,6 +1,7 @@
 import 'package:cinema_app/domain/api_client/api_client.dart';
 import 'package:cinema_app/domain/entity/movie_details_credits.dart';
 import 'package:cinema_app/library/widgets/provider.dart';
+import 'package:cinema_app/ui/theme/app_button_style.dart';
 import 'package:cinema_app/ui/widgets/elements/radial_percent_widget.dart';
 import 'package:cinema_app/ui/widgets/movie_details/movie_details_model.dart';
 import 'package:flutter/material.dart';
@@ -73,6 +74,7 @@ class _ScoreWidget extends StatelessWidget {
       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
       children: [
         TextButton(
+          style: AppButtonStyle.linkButton,
           onPressed: () {},
           child: Row(
             children: [
@@ -82,10 +84,11 @@ class _ScoreWidget extends StatelessWidget {
                 child: RadialPercentWidget(
                   percent: voteAverage / 10,
                   fillColor: const Color.fromARGB(255, 10, 23, 25),
-                  lineColor: const Color.fromARGB(255, 37, 203, 103),
-                  freeColor: const Color.fromARGB(255, 25, 54, 31),
-                  lineWidth: 5,
-                  child: Text((voteAverage * 10).toStringAsFixed(0)),
+                  lineWidth: 3,
+                  child: Text(
+                    (voteAverage * 10).toStringAsFixed(0),
+                    style: const TextStyle(color: Colors.white),
+                  ),
                 ),
               ),
               const SizedBox(
@@ -101,6 +104,7 @@ class _ScoreWidget extends StatelessWidget {
           height: 15,
         ),
         TextButton(
+          style: AppButtonStyle.linkButton,
           onPressed: () {},
           child: const Row(
             children: [
@@ -137,7 +141,24 @@ class _TopPosterWidget extends StatelessWidget {
             left: 20,
             bottom: 20,
             child: posterPath != null
-                ? Image.network(ApiClient.imageUrl(posterPath))
+                ? DecoratedBox(
+                    decoration: BoxDecoration(
+                      color: Colors.transparent,
+                      border: Border.all(color: Colors.black.withOpacity(1)),
+                      borderRadius: const BorderRadius.all(Radius.circular(10)),
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.black.withOpacity(0.7),
+                          blurRadius: 13,
+                          offset: const Offset(2, 2),
+                        ),
+                      ],
+                    ),
+                    child: ClipRRect(
+                      borderRadius: BorderRadius.circular(10),
+                      child: Image.network(ApiClient.imageUrl(posterPath)),
+                    ),
+                  )
                 : const SizedBox.shrink(),
           )
         ],

@@ -52,7 +52,7 @@ class _ActorListWidget extends StatelessWidget {
     var cast = model?.movieDetails?.credits.cast;
     if (cast == null || cast.isEmpty) return const SizedBox.shrink();
     return ListView.builder(
-      itemCount: 20,
+      itemCount: cast.length > 20 ? 20 : cast.length,
       itemExtent: 140,
       scrollDirection: Axis.horizontal,
       itemBuilder: (BuildContext constext, int index) {
