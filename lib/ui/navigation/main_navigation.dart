@@ -4,12 +4,14 @@ import 'package:cinema_app/ui/widgets/auth/auth_widget.dart';
 import 'package:cinema_app/ui/widgets/main_screen/main_screen_widget.dart';
 import 'package:cinema_app/ui/widgets/movie_details/movie_details_model.dart';
 import 'package:cinema_app/ui/widgets/movie_details/movie_details_widget.dart';
+import 'package:cinema_app/ui/widgets/movie_trailer/movie_trailer_widget.dart';
 import 'package:flutter/material.dart';
 
 abstract class MainNavigationRouteNames {
   static const auth = 'auth';
   static const mainScreen = '/';
   static const movieDetails = '/movie_details';
+  static const movieTrailer = '/movie_details/trailer';
 }
 
 class MainNavigation {
@@ -35,6 +37,11 @@ class MainNavigation {
                   create: () => MovieDetailsModel(movieId),
                   child: const MovieDetailsWidget(),
                 ));
+      case MainNavigationRouteNames.movieTrailer:
+        final arguments = settings.arguments;
+        final youtubeKey = arguments is String ? arguments : '';
+        return MaterialPageRoute(
+            builder: (context) => MovieTrailerWidget(youtubeKey: youtubeKey));
       default:
         const widget = Center(child: Text('Navigation Error!!!'));
         return MaterialPageRoute(builder: (context) => widget);

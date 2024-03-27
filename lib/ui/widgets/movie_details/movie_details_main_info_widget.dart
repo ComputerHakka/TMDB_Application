@@ -1,6 +1,7 @@
 import 'package:cinema_app/domain/api_client/api_client.dart';
 import 'package:cinema_app/domain/entity/movie_details_credits.dart';
 import 'package:cinema_app/library/widgets/provider.dart';
+import 'package:cinema_app/ui/navigation/main_navigation.dart';
 import 'package:cinema_app/ui/theme/app_button_style.dart';
 import 'package:cinema_app/ui/widgets/elements/radial_percent_widget.dart';
 import 'package:cinema_app/ui/widgets/movie_details/movie_details_model.dart';
@@ -70,6 +71,9 @@ class _ScoreWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     final model = NotifierProvider.watch<MovieDetailsModel>(context);
     final voteAverage = model?.movieDetails?.voteAverage ?? 0;
+    final videos = model?.movieDetails?.videos.results
+        .where((video) => video.type == 'Trailer' && video.site == 'YouTube');
+    final trailerKey = videos?.isNotEmpty == true ? videos?.first.key : null;
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
       children: [
@@ -103,19 +107,23 @@ class _ScoreWidget extends StatelessWidget {
           width: 1,
           height: 15,
         ),
-        TextButton(
-          style: AppButtonStyle.linkButton,
-          onPressed: () {},
-          child: const Row(
-            children: [
-              Icon(Icons.play_arrow_rounded),
-              SizedBox(
-                width: 5,
-              ),
-              Text('Play Trailer'),
-            ],
-          ),
-        ),
+        trailerKey != null
+            ? TextButton(
+                style: AppButtonStyle.linkButton,
+                onPressed: () => Navigator.of(context).pushNamed(
+                    MainNavigationRouteNames.movieTrailer,
+                    arguments: trailerKey),
+                child: const Row(
+                  children: [
+                    Icon(Icons.play_arrow_rounded),
+                    SizedBox(
+                      width: 5,
+                    ),
+                    Text('Play Trailer'),
+                  ],
+                ),
+              )
+            : const SizedBox.shrink(),
       ],
     );
   }
@@ -230,12 +238,15 @@ class _Summerywidget extends StatelessWidget {
     // 'R, 04/29/2021 (USA) 1h49m Action, Adventure, Thriller, War',
     return ColoredBox(
       color: const Color.fromRGBO(22, 21, 25, 1.0),
-      child: Padding(
-        padding: const EdgeInsets.symmetric(vertical: 10.0, horizontal: 16.0),
-        child: Text(
-          texts.join(' '),
-          textAlign: TextAlign.center,
-          style: getTextStyle(),
+      child: SizedBox(
+        width: double.infinity,
+        child: Padding(
+          padding: const EdgeInsets.symmetric(vertical: 10.0, horizontal: 16.0),
+          child: Text(
+            texts.join(' '),
+            textAlign: TextAlign.center,
+            style: getTextStyle(),
+          ),
         ),
       ),
     );
