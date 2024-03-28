@@ -6,8 +6,6 @@ class RadialPercentWidget extends StatelessWidget {
   final Widget child;
   final double percent;
   final Color fillColor;
-  final Color lineColor;
-  final Color freeColor;
   final double lineWidth;
 
   const RadialPercentWidget(
@@ -15,8 +13,6 @@ class RadialPercentWidget extends StatelessWidget {
       required this.child,
       required this.percent,
       required this.fillColor,
-      required this.lineColor,
-      required this.freeColor,
       required this.lineWidth});
 
   @override
@@ -26,14 +22,10 @@ class RadialPercentWidget extends StatelessWidget {
       children: [
         CustomPaint(
           painter: RadialPercentPainter(
-              percent: percent,
-              fillColor: fillColor,
-              lineColor: lineColor,
-              freeColor: freeColor,
-              lineWidth: lineWidth),
+              percent: percent, fillColor: fillColor, lineWidth: lineWidth),
         ),
         Padding(
-          padding: const EdgeInsets.all(11.0),
+          padding: const EdgeInsets.all(3.0),
           child: Center(child: child),
         ),
       ],
@@ -44,30 +36,42 @@ class RadialPercentWidget extends StatelessWidget {
 class RadialPercentPainter extends CustomPainter {
   final double percent;
   final Color fillColor;
-  final Color lineColor;
-  final Color freeColor;
   final double lineWidth;
 
   RadialPercentPainter(
       {super.repaint,
       required this.percent,
       required this.fillColor,
-      required this.lineColor,
-      required this.freeColor,
       required this.lineWidth});
 
   @override
   void paint(Canvas canvas, Size size) {
     Rect arcRect = calculateArcsRect(size);
+    Color lineColor = getLineColor(percent).lineColor;
+    Color freeColor = getLineColor(percent).freeColor;
 
     drawBackground(canvas, size);
 
-    drawFreeArc(canvas, arcRect);
+    drawFreeArc(canvas, arcRect, freeColor);
 
-    drawFilledArc(canvas, arcRect);
+    drawFilledArc(canvas, arcRect, lineColor);
   }
 
-  void drawFilledArc(Canvas canvas, Rect arcRect) {
+  ({Color lineColor, Color freeColor}) getLineColor(double percent) {
+    var lineColor = percent > 0.69
+        ? Colors.green
+        : percent > 0.49
+            ? Colors.yellow
+            : Colors.red;
+    var freeColor = percent > 0.69
+        ? const Color.fromARGB(255, 34, 59, 35)
+        : percent > 0.49
+            ? const Color.fromARGB(255, 68, 65, 37)
+            : const Color.fromARGB(255, 59, 25, 22);
+    return (lineColor: lineColor, freeColor: freeColor);
+  }
+
+  void drawFilledArc(Canvas canvas, Rect arcRect, Color lineColor) {
     final feelPaint = Paint()
       ..color = lineColor
       ..style = PaintingStyle.stroke
@@ -77,7 +81,7 @@ class RadialPercentPainter extends CustomPainter {
     canvas.drawArc(arcRect, -pi / 2, pi * 2 * percent, false, feelPaint);
   }
 
-  void drawFreeArc(Canvas canvas, Rect arcRect) {
+  void drawFreeArc(Canvas canvas, Rect arcRect, Color freeColor) {
     final paint = Paint()
       ..color = freeColor
       ..style = PaintingStyle.stroke

@@ -13,8 +13,6 @@ class SerialListWidget extends StatelessWidget {
         child: const RadialPercentWidget(
           percent: 0.72,
           fillColor: Colors.black,
-          lineColor: Colors.yellow,
-          freeColor: Colors.red,
           lineWidth: 5,
           child: Text(
             '72',
