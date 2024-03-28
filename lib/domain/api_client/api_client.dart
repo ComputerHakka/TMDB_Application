@@ -5,12 +5,25 @@ import 'dart:io';
 import 'package:cinema_app/domain/entity/movie_details.dart';
 import 'package:cinema_app/domain/entity/popular_movie_response.dart';
 
-enum ApiClientExceptionType { network, auth, other }
+enum ApiClientExceptionType { network, auth, other, sessionExpired }
 
 class ApiClientException implements Exception {
   final ApiClientExceptionType type;
 
   ApiClientException({required this.type});
+}
+
+enum MediaType { movie, tv }
+
+extension MediaTypeAsString on MediaType {
+  String asString() {
+    switch (this) {
+      case MediaType.movie:
+        return 'movie';
+      case MediaType.tv:
+        return 'tv';
+    }
+  }
 }
 
 class ApiClient {
@@ -109,6 +122,26 @@ class ApiClient {
     return result;
   }
 
+  Future<int> getAccountInfo(
+    String sessionId,
+  ) async {
+    parser(dynamic json) {
+      final jsonMap = json as Map<String, dynamic>;
+      final response = jsonMap['id'] as int;
+      return response;
+    }
+
+    final result = _get(
+      '/account',
+      parser,
+      {
+        'api_key': _apiKey,
+        'session_id': sessionId,
+      },
+    );
+    return result;
+  }
+
   Future<PopularMovieResponse> popularMovies(int page, String locale) async {
     parser(dynamic json) {
       final jsonMap = json as Map<String, dynamic>;
@@ -175,6 +208,27 @@ class ApiClient {
     return result;
   }
 
+  Future<bool> isFavoriteMovie(
+    int movieId,
+    String sessionId,
+  ) async {
+    parser(dynamic json) {
+      final jsonMap = json as Map<String, dynamic>;
+      final response = jsonMap['favorite'] as bool;
+      return response;
+    }
+
+    final result = _get(
+      '/movie/$movieId/account_states',
+      parser,
+      {
+        'api_key': _apiKey,
+        'session_id': sessionId,
+      },
+    );
+    return result;
+  }
+
   Future<String> _validateUser({
     required String username,
     required String password,
@@ -197,6 +251,35 @@ class ApiClient {
       parameters,
       parser,
       {'api_key': _apiKey},
+    );
+    return result;
+  }
+
+  Future<int> markAsFavorite({
+    required int accountId,
+    required String sessionId,
+    required MediaType mediaType,
+    required int mediaId,
+    required bool isFavorite,
+  }) async {
+    parser(dynamic json) {
+      return 1;
+    }
+
+    final parameters = <String, dynamic>{
+      'media_type': mediaType.asString(),
+      'media_id': mediaId,
+      'favorite': isFavorite,
+    };
+
+    final result = _post(
+      '/account/$accountId/favorite',
+      parameters,
+      parser,
+      {
+        'api_key': _apiKey,
+        'session_id': sessionId,
+      },
     );
     return result;
   }
@@ -230,6 +313,8 @@ void _validateResponse(HttpClientResponse response, dynamic json) {
     final code = status is int ? status : 0;
     if (code == 30) {
       throw ApiClientException(type: ApiClientExceptionType.auth);
+    } else if (code == 3) {
+      throw ApiClientException(type: ApiClientExceptionType.sessionExpired);
     } else {
       throw ApiClientException(type: ApiClientExceptionType.other);
     }

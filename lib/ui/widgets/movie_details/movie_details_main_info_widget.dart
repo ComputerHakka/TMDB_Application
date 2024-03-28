@@ -168,7 +168,22 @@ class _TopPosterWidget extends StatelessWidget {
                     ),
                   )
                 : const SizedBox.shrink(),
-          )
+          ),
+          Positioned(
+            top: 20,
+            right: 20,
+            child: CircleAvatar(
+              radius: 20,
+              backgroundColor: Colors.white,
+              child: IconButton(
+                color: Colors.red,
+                onPressed: () => model?.togglefavorite(),
+                icon: Icon(model?.isFavorite == true
+                    ? Icons.favorite
+                    : Icons.favorite_outline),
+              ),
+            ),
+          ),
         ],
       ),
     );

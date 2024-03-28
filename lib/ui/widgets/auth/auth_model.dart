@@ -31,23 +31,24 @@ class AuthModel extends ChangeNotifier {
     _isAuthProgress = true;
     notifyListeners();
     String? sessionId;
+    int? accountId;
     try {
       sessionId = await _apiClient.auth(
         username: login,
         password: password,
       );
+      accountId = await _apiClient.getAccountInfo(sessionId);
     } on ApiClientException catch (e) {
       switch (e.type) {
         case ApiClientExceptionType.network:
           _errorMessage =
               'Сервер недоступен. Проверьте подключение к Интернету';
-          break;
         case ApiClientExceptionType.auth:
           _errorMessage = 'Неправильный логин или пароль';
-          break;
         case ApiClientExceptionType.other:
           _errorMessage = 'Произошла ошибка, попробуйте ещё раз';
-          break;
+        case ApiClientExceptionType.sessionExpired:
+          _errorMessage = 'Сессия устарела';
       }
     }
 
@@ -57,41 +58,15 @@ class AuthModel extends ChangeNotifier {
       return;
     }
 
-    if (sessionId == null) {
+    if (sessionId == null || accountId == null) {
       _errorMessage = 'Неизвестная ошибка повторите попытку';
       notifyListeners();
       return;
     }
 
     await _sessionDataProvider.setSessionId(sessionId);
+    await _sessionDataProvider.setAccountId(accountId);
     unawaited(Navigator.of(context)
         .pushReplacementNamed(MainNavigationRouteNames.mainScreen));
   }
 }
-
-// class AuthProvider extends InheritedNotifier {
-//   final AuthModel model;
-//   const AuthProvider({
-//     super.key,
-//     required this.model,
-//     required super.child,
-//   }) : super(
-//           notifier: model,
-//         );
-
-//   static AuthProvider? watch(BuildContext context) {
-//     return context.dependOnInheritedWidgetOfExactType<AuthProvider>();
-//   }
-
-//   static AuthProvider? read(BuildContext context) {
-//     final widget =
-//         context.getElementForInheritedWidgetOfExactType<AuthProvider>()?.widget;
-//     return widget is AuthProvider ? widget : null;
-//   }
-
-//   @override
-//   bool updateShouldNotify(AuthProvider oldWidget) {
-//     return true;
-//   }
-// }
-

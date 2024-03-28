@@ -1,4 +1,5 @@
 import 'package:cinema_app/library/widgets/provider.dart';
+import 'package:cinema_app/ui/widgets/app/my_app_model.dart';
 import 'package:cinema_app/ui/widgets/movie_details/movie_details_main_additional_information_widget.dart';
 import 'package:cinema_app/ui/widgets/movie_details/movie_details_main_info_widget.dart';
 import 'package:cinema_app/ui/widgets/movie_details/movie_details_main_recommendations_widget.dart';
@@ -16,8 +17,17 @@ class MovieDetailsWidget extends StatefulWidget {
 
 class _MovieDetailsWidgetState extends State<MovieDetailsWidget> {
   @override
+  void initState() {
+    super.initState();
+    final model = NotifierProvider.read<MovieDetailsModel>(context);
+    final appModel = Provider.read<MyAppModel>(context);
+    model?.onSessionExpired = () => appModel?.resetSession(context);
+  }
+
+  @override
   void didChangeDependencies() {
     super.didChangeDependencies();
+
     NotifierProvider.read<MovieDetailsModel>(context)?.setupLocale(context);
   }
 
