@@ -23,7 +23,7 @@ class MyApp extends StatelessWidget {
           selectedItemColor: Colors.white,
           unselectedItemColor: Colors.grey,
         ),
-        colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
+        colorScheme: ColorScheme.fromSeed(seedColor: Colors.blueAccent),
         useMaterial3: true,
       ),
       localizationsDelegates: const [

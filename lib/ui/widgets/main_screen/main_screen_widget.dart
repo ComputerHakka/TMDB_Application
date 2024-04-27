@@ -73,14 +73,14 @@ class _MainScreenWidgetState extends State<MainScreenWidget> {
         body: IndexedStack(
           index: _selectedTab,
           children: [
-            const Text('Новости'),
+            const Center(child: Text('Новости')),
             NotifierProvider(
               create: () => movieListModel,
               isManagingModel: false,
               child: const MovieListWidget(),
             ),
             const SerialListWidget(),
-            const Text('Аккаунт'),
+            const Center(child: Text('Аккаунт')),
           ],
         ));
   }
